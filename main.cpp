@@ -7,8 +7,7 @@
 #include <string>
 #include "heap.h"
 using namespace std;
-//test comment to prove git
-//test comment 2
+
 // Global arrays for node information
 const int MAX_NODES = 64;
 int weightArr[MAX_NODES];
