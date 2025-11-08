@@ -91,14 +91,29 @@ int createLeafNodes(int freq[]) {
 int buildEncodingTree(int nextFree) {
     // TODO:
     // 1. Create a MinHeap object.
+    MinHeap heap;
     // 2. Push all leaf node indices into the heap.
+    for (int i = 0; i < nextFree; ++i) {
+        heap.push(i, weightArr);
+    }
     // 3. While the heap size is greater than 1:
-    //    - Pop two smallest nodes
-    //    - Create a new parent node with combined weight
-    //    - Set left/right pointers
-    //    - Push new parent index back into the heap
-    // 4. Return the index of the last remaining node (root)
-    return -1; // placeholder
+    while (heap.size > 1) {
+        //    - Pop two smallest nodes
+        int left = heap.pop(weightArr);
+        int right = heap.pop(weightArr);
+        //    - Create a new parent node with combined weight
+        int parent = nextFree++;
+        weightArr[parent] = weightArr[left] + weightArr[right];
+        //    - Set left/right pointers
+        leftArr[parent] = left;
+        rightArr[parent] = right;
+        charArr[parent] = '*'; // internal node marker
+        //    - Push new parent index back into the heap
+        heap.push(parent, weightArr);
+    }
+        // 4. Return the index of the last remaining node (root)
+        return heap.pop(weightArr);
+
 }
 
 // Step 4: Use an STL stack to generate codes
@@ -107,6 +122,24 @@ void generateCodes(int root, string codes[]) {
     // Use stack<pair<int, string>> to simulate DFS traversal.
     // Left edge adds '0', right edge adds '1'.
     // Record code when a leaf node is reached.
+    if (root == -1) return;
+    stack<pair<int, string>> s;
+    s.push({root, ""});
+    while (!s.empty()) {
+        auto [node, path] = s.top();
+        s.pop();
+        if (leftArr[node] == -1 && rightArr[node] == -1) {
+            char c = charArr[node];
+            if (c >= 'a' && c <= 'z')
+                codes[c - 'a'] = path;
+        } else {
+            if (rightArr[node] != -1)
+                s.push({rightArr[node], path + "1"});
+            if (leftArr[node] != -1)
+                s.push({leftArr[node], path + "0"});
+        }
+    }
+    cout << "Codes generated successfully.\n";
 }
 
 // Step 5: Print table and encoded message

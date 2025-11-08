@@ -27,6 +27,7 @@ struct MinHeap {
         if (size == 0) return -1; // Empty heap
         int root = data[0];
         data[0] = data[size - 1];
+        size--;
         downheap(0, weightArr);
         return root;
     }
